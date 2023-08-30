@@ -36,4 +36,4 @@ jobs:
       # Deploys application based on given manifest file
       - name: Deploy Helm chart
         run: |
-          helm --install my-app ./deployment-scripts/dev/helm/
+          helm install my-app ./deployment-scripts/dev/helm/
