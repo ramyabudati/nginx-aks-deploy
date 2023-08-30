@@ -6,6 +6,7 @@ replicaCount: 1
 deployment_name: "nginx-deployment"
 service_name: "nginx-service"
 hpa_name: "nginx-hpa"
+ingress_name: "nginx-ingress"
 label_name: "nginx"
 image:
   repository: "containetest12.azurecr.io/myapp"

@@ -1,15 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name:  {{ .Values.service_name }}
-  labels:
-    app:  {{ .Values.label_name }}
+  name: {{ .Values.service_name }}
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 spec:
-  type: {{ .Values.service.type }}
+  type: LoadBalancer
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+  - port: 80
   selector:
-    app:  {{ .Values.label_name }}
+    app: {{ .Values.label_name }}
