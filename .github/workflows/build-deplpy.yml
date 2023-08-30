@@ -26,10 +26,10 @@ jobs:
       - name: Build and push Docker image to ACR
         run: |
           docker login containetest12.azurecr.io --username ${{ secrets.AZURE_CLIENT_ID }} --password ${{ secrets.AZURE_CLIENT_SECRET }}
-          docker build --file Dockerfile --tag ${{ secrets.container_registery }}/myapp:latest .
-          docker build --file Dockerfile --tag ${{ secrets.container_registery }}/myapp:{GITHUB_SHA} .
-          docker push ${{ secrets.container_registery }}/myapp:latest
-          docker push ${{ secrets.container_registery}}/myapp:{GITHUB_SHA}
+          docker build --file Dockerfile --tag containetest12.azurecr.io/myapp:latest .
+          docker build --file Dockerfile --tag containetest12.azurecr.io/myapp:{GITHUB_SHA} .
+          docker push containetest12.azurecr.io/myapp:latest
+          docker push containetest12.azurecr.io/myapp:{GITHUB_SHA}
       - name: Configure kubectl
         run: |
           az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name  ${{ env.CLUSTER_NAME }} --subscription ${{ env.subscription_id }}
