@@ -1,0 +1,40 @@
+name: Build and Push Docker Image to ACR
+
+on:
+  push:
+    branches:
+      - main  # Adjust as needed
+env:
+  RESOURCE_GROUP: "akstdev-rg"
+  CLUSTER_NAME: "aks-poc"
+  subscription_id: "630489ed-a637-4411-ad4d-597c379984b0" 
+  container_registery: "containetest12.azurecr.io"
+ 
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Login to Azure
+        run: az login --service-principal --username ${{ secrets.AZURE_CLIENT_ID }} --password ${{ secrets.AZURE_CLIENT_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      - name: Build and push Docker image to ACR
+        run: |
+          docker login ngixnacr.azurecr.io --username ${{ secrets.AZURE_CLIENT_ID }} --password ${{ secrets.AZURE_CLIENT_SECRET }}
+          docker build --file Dockerfile --tag ${{ secrets.container_registery }}/myapp:latest .
+          docker build --file Dockerfile --tag ${{ secrets.container_registery }}/myapp:{GITHUB_SHA} .
+          docker push ${{ secrets.container_registery }}/myapp:latest
+          docker push ${{ secrets.container_registery}}/myapp:{GITHUB_SHA}
+      - name: Configure kubectl
+        run: |
+          az aks get-credentials --resource-group ${{ env.RESOURCE_GROUP }} --name  ${{ env.CLUSTER_NAME }} --subscription ${{ env.subscription_id }}
+
+      # Deploys application based on given manifest file
+      - name: Deploy Helm chart
+        run: |
+          helm --install my-app ./deployment-scripts/dev/helm --namespace default .

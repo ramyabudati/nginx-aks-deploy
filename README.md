@@ -1,1 +1,1 @@
-# nginx-aks-deploy
+# nginx-into-aks
